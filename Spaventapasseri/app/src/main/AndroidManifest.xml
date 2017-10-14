@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".CameraAcc"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="fullSensor">
             </activity>
     </application>
