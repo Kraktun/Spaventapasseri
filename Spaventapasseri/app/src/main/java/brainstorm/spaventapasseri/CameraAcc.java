@@ -64,9 +64,12 @@ public class CameraAcc extends AppCompatActivity {
         cameraView = (CameraView) findViewById(R.id.camera_view);
         hasCameraPermission = permissionsDelegate.hasCameraPermission();
 
-        if (hasCameraPermission) {
+        if (hasCameraPermission)
+        {
             cameraView.setVisibility(View.VISIBLE);
-        } else {
+        }
+        else
+        {
             permissionsDelegate.requestCameraPermission();
         }
 
@@ -92,8 +95,8 @@ public class CameraAcc extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 fotoapparatSwitcher
-                        .getCurrentFotoapparat()
-                        .setZoom(progress / (float) seekBar.getMax());
+                .getCurrentFotoapparat()
+                .setZoom(progress / (float) seekBar.getMax());
             }
 
             @Override
@@ -115,16 +118,16 @@ public class CameraAcc extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 fotoapparatSwitcher
-                        .getCurrentFotoapparat()
-                        .updateParameters(
-                                UpdateRequest.builder()
-                                        .flash(
-                                                isChecked
-                                                        ? torch()
-                                                        : off()
-                                        )
-                                        .build()
-                        );
+                .getCurrentFotoapparat()
+                .updateParameters(
+                    UpdateRequest.builder()
+                    .flash(
+                        isChecked
+                        ? torch()
+                        : off()
+                        )
+                    .build()
+                    );
             }
         });
     }
@@ -132,10 +135,10 @@ public class CameraAcc extends AppCompatActivity {
     private void switchCameraOnClick() {
         View switchCameraButton = findViewById(R.id.switchCamera);
         switchCameraButton.setVisibility(
-                canSwitchCameras()
-                        ? View.VISIBLE
-                        : View.GONE
-        );
+            canSwitchCameras()
+            ? View.VISIBLE
+            : View.GONE
+            );
         switchCameraOnClick(switchCameraButton);
     }
 
@@ -174,64 +177,67 @@ public class CameraAcc extends AppCompatActivity {
 
     private Fotoapparat createFotoapparat(LensPosition position) {
         return Fotoapparat
-                .with(this)
-                .cameraProvider(CameraProviders.v1()) // change this to v2 to test Camera2 API
-                .into(cameraView)
-                .previewScaleType(ScaleType.CENTER_CROP)
-                .photoSize(standardRatio(biggestSize()))
-                .lensPosition(lensPosition(position))
-                .focusMode(firstAvailable(
-                        continuousFocus(),
-                        autoFocus(),
-                        fixed()
-                ))
-                .flash(firstAvailable(
-                        autoRedEye(),
-                        autoFlash(),
-                        torch(),
-                        off()
-                ))
-                .previewFpsRange(rangeWithHighestFps())
-                .sensorSensitivity(highestSensorSensitivity())
-                .frameProcessor(new SampleFrameProcessor())
-                .logger(loggers(
-                        logcat(),
-                        fileLogger(this)
-                ))
-                .cameraErrorCallback(new CameraErrorCallback() {
-                    @Override
-                    public void onError(CameraException e) {
-                        Toast.makeText(CameraAcc.this, e.toString(), Toast.LENGTH_LONG).show();
-                    }
-                })
-                .build();
+               .with(this)
+               .cameraProvider(CameraProviders.v1())  // change this to v2 to test Camera2 API
+               .into(cameraView)
+               .previewScaleType(ScaleType.CENTER_CROP)
+               .photoSize(standardRatio(biggestSize()))
+               .lensPosition(lensPosition(position))
+               .focusMode(firstAvailable(
+                              continuousFocus(),
+                              autoFocus(),
+                              fixed()
+                              ))
+               .flash(firstAvailable(
+                          autoRedEye(),
+                          autoFlash(),
+                          torch(),
+                          off()
+                          ))
+               .previewFpsRange(rangeWithHighestFps())
+               .sensorSensitivity(highestSensorSensitivity())
+               .frameProcessor(new SampleFrameProcessor())
+               .logger(loggers(
+                           logcat(),
+                           fileLogger(this)
+                           ))
+               .cameraErrorCallback(new CameraErrorCallback() {
+            @Override
+            public void onError(CameraException e) {
+                Toast.makeText(CameraAcc.this, e.toString(), Toast.LENGTH_LONG).show();
+            }
+        })
+               .build();
     }
 
     private void takePicture() {
         PhotoResult photoResult = fotoapparatSwitcher.getCurrentFotoapparat().takePicture();
 
         photoResult.saveToFile(new File(
-                getExternalFilesDir("photos"),
-                "photo.jpg"
-        ));
+                                   getExternalFilesDir("photos"),
+                                   "photo.jpg"
+                                   ));
 
         photoResult
-                .toBitmap(scaled(0.25f))
-                .whenAvailable(new PendingResult.Callback<BitmapPhoto>() {
-                    @Override
-                    public void onResult(BitmapPhoto result) {
-                        ImageView imageView = (ImageView) findViewById(R.id.result);
+        .toBitmap(scaled(0.25f))
+        .whenAvailable(new PendingResult.Callback<BitmapPhoto>() {
+            @Override
+            public void onResult(BitmapPhoto result) {
+                ImageView imageView = (ImageView) findViewById(R.id.result);
 
-                        imageView.setImageBitmap(result.bitmap);
-                        imageView.setRotation(-result.rotationDegrees);
-                    }
-                });
+                imageView.setImageBitmap(result.bitmap);
+                imageView.setRotation(-result.rotationDegrees);
+            }
+        });
     }
 
     private void switchCamera() {
-        if (fotoapparatSwitcher.getCurrentFotoapparat() == frontFotoapparat) {
+        if (fotoapparatSwitcher.getCurrentFotoapparat() == frontFotoapparat)
+        {
             fotoapparatSwitcher.switchTo(backFotoapparat);
-        } else {
+        }
+        else
+        {
             fotoapparatSwitcher.switchTo(frontFotoapparat);
         }
     }
@@ -239,7 +245,8 @@ public class CameraAcc extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (hasCameraPermission) {
+        if (hasCameraPermission)
+        {
             fotoapparatSwitcher.start();
         }
     }
@@ -247,7 +254,8 @@ public class CameraAcc extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (hasCameraPermission) {
+        if (hasCameraPermission)
+        {
             fotoapparatSwitcher.stop();
         }
     }
@@ -257,7 +265,8 @@ public class CameraAcc extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (permissionsDelegate.resultGranted(requestCode, permissions, grantResults)) {
+        if (permissionsDelegate.resultGranted(requestCode, permissions, grantResults))
+        {
             fotoapparatSwitcher.start();
             cameraView.setVisibility(View.VISIBLE);
         }
