@@ -1,21 +1,67 @@
 package brainstorm.spaventapasseri;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * Created by ricca on 14-Oct-17.
- */
+class PhotoItem
+{
+    private File file;
+    private String title;
+    private BigDecimal amount;
+    //R  todo: usare una libreria per leggere e scrivere il valore della spesa nei metadata
 
-public class PhotoItem {
-    public File photo;
-    public String title;
-    public Date date;
-    public int thumbnail;
+    private Date date;
+    private String stringDate;
 
-    PhotoItem(File photo, String title, Date date) {
-        this.photo = photo;
-        this.title = title;
-        this.date = date;
+    PhotoItem(File file)
+    {
+        this.file = file;
+        title = file.getName();
+        date = new Date(file.lastModified());
+        stringDate = date.toString();
+        // todo: amount
     }
+
+    File getFile()
+    {
+        return file;
+    }
+
+    boolean deleteFile()
+    {
+        return file.delete();
+    }
+
+    String getTitle()
+    {
+        return title;
+    }
+
+    boolean setTitle(String title)
+    {
+        return file.renameTo(new File(file.getParent(),
+                        title + file.toString().substring(file.toString().lastIndexOf("."))));
+    }
+
+    Date getDate()
+    {
+        return date;
+    }
+
+    String getStringDate()
+    {
+        return stringDate;
+    }
+
+    BigDecimal getAmount()
+    {
+        return amount;
+    }
+
+    void setAmount(BigDecimal amount)
+    {
+        this.amount = amount;
+    }
+
 }
