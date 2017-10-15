@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Spaventapasseri</string>
+    <string name="app_name">ScontrApp</string>
     <string name="action_settings">Settings</string>
     <string name="receipt_list_title">I miei Scontrini</string>
 </resources>
