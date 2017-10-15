@@ -21,6 +21,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
@@ -89,26 +91,26 @@ public class ReceiptList extends AppCompatActivity {
     //   Si occupera' Glide di caricarle e mostrarle ottimizzando la memoria
     private void fetchPhotosInfo() {
         //File[] photos = new File(Environment.getExternalStorageDirectory(), "Spaventapasseri").listFiles(IMAGE_FILTER);
-//        File[] photos = getFilesDir().listFiles(IMAGE_FILTER);
+        File[] photos = getFilesDir().listFiles(IMAGE_FILTER);
 //
 //        //boolean a  = new File(Environment.getExternalStorageDirectory(), "Spaventapasseri").exists();
 //        Toast.makeText(this, String.valueOf(getFilesDir()), Toast.LENGTH_LONG).show();
 //        Toast.makeText(this, String.valueOf(new File(Environment.getExternalStorageDirectory(), "Spaventapasseri")), Toast.LENGTH_LONG).show();
 //
 //
-//        List<PhotoItem> photoList = new ArrayList<>();
-//        for (File file : photos) {
-//            photoList.add(new PhotoItem(file));
-//        }
-//
-//        Collections.sort(photoList, new Comparator<PhotoItem>() {
-//            @Override
-//            public int compare(PhotoItem p1, PhotoItem p2) {
-//                return -p1.getDate().compareTo(p2.getDate()); //R  il segno meno e' per invertire l'ordine
-//            }
-//        });
-//
-//        adapter.setPhotoList(photoList);
+        List<PhotoItem> photoList = new ArrayList<>();
+        for (File file : photos) {
+            photoList.add(new PhotoItem(file));
+        }
+
+        Collections.sort(photoList, new Comparator<PhotoItem>() {
+            @Override
+            public int compare(PhotoItem p1, PhotoItem p2) {
+                return -p1.getDate().compareTo(p2.getDate()); //R  il segno meno e' per invertire l'ordine
+            }
+        });
+
+        adapter.setPhotoList(photoList);
 
     }
 
@@ -178,8 +180,12 @@ public class ReceiptList extends AppCompatActivity {
             //holder.title.setText(currentItem.title);
 
             //R  thumbnail ratio 20%
+            //Glide.with(context).load(currentItem.getFile())
+            //                   .thumbnail(0.2f)
+             //                  .into(holder.thumbnail);
+
             Glide.with(context).load(currentItem.getFile())
-                               .thumbnail(0.2f)
+                               .thumbnail(1.f)
                                .into(holder.thumbnail);
 
 
