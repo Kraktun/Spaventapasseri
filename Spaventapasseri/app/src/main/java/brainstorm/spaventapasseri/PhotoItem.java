@@ -18,10 +18,11 @@ class PhotoItem implements Serializable
     PhotoItem(File file)
     {
         this.file = file;
-        title = file.getName();
+        title = file.getName().substring(0, file.getName().lastIndexOf("."));
         date = new Date(file.lastModified());
         stringDate = date.toString();
-        // todo: amount
+        //debug
+        amount = new BigDecimal(3.14f);
     }
 
     File getFile()
@@ -57,8 +58,8 @@ class PhotoItem implements Serializable
 
     BigDecimal getAmount()
     {
-        //debug
-        return new BigDecimal(3.14f);
+        return amount;
+        //todo: savare nel file
     }
 
     void setAmount(BigDecimal amount)

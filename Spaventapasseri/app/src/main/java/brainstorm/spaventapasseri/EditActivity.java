@@ -2,6 +2,7 @@ package brainstorm.spaventapasseri;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -14,6 +15,8 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         photoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
 
+        //R  usa questo per il debug
+        Toast.makeText(this, photoItem.getTitle(), Toast.LENGTH_LONG).show();
 
     }
 
