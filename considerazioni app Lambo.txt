@@ -1,0 +1,34 @@
+Difetti:
+
+- splash screen con aspect ratio sbagliato
+- nella welcome screen, icona "presa da google immagini" con sfondo inconsistente con lo sfondo dell'app
+
+Nella schermata per registrarsi:
+- i bottoni sono quelli di iOS -> app probabilmente costruita con phonegap o xamarin
+- richiesta maschio o femmina... e gli elicotteri apache? :)
+- scelta data di nascita con il selettore nativo android: non e' pefettamente intuitivo come selezionare l'anno.
+
+Schermata principale:
+- Sembra che le icone non siano ottimizzate per gli schermi ad altra risoluzione
+
+Fotocamera:
+- e' quella nativa -> context switching (e in piu' mi si e' aperta la fotocamera frontale)
+- dopo lo scatto, l'icona per ripetere lo scatto sembra l'icona per ruotare la foto
+- sembra non esserci l'OCR
+- dopo il crop del documento, questo risulta di aspect ratio sbagliato.
+- la ui per aggiungere una foto ad altre appena scattate e la ui per aggiungere una foto ad altre scattate in passato, non sono consistenti
+
+- mancano animazioni di transizione e/o sono inconsistenti
+- in generale l'app non e' consistente con il linguaggio dell'ui di android
+- gli allineamenti sono spesso sbagliati (impostazioni)
+
+
+
+Pregi:
+- l'app e' stata pensata per essere utilizzata per piu' tipologie di documenti
+- sistema di etichette e' di complessita' adatta allo scopo e utilizzo dell'app
+- dopo la registazione i dati dell'email e password sono gia' inseriti per il login
+- dopo lo scatto puoi scartare o accettare la foto
+- riconoscimento automatico del rettangolo del documento (spesso pero' non funziona)
+- dopo lo scatto, avviso prima di annullare la foto
+- promemoria + altri campi per aggiungere informazioni al documento
