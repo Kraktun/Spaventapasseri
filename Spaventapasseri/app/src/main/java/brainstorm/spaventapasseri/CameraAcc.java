@@ -1,32 +1,32 @@
 package brainstorm.spaventapasseri;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.Random;
 
 import io.fotoapparat.Fotoapparat;
 import io.fotoapparat.FotoapparatSwitcher;
 import io.fotoapparat.error.CameraErrorCallback;
 import io.fotoapparat.hardware.CameraException;
 import io.fotoapparat.hardware.provider.CameraProviders;
-import io.fotoapparat.parameter.LensPosition;
 import io.fotoapparat.parameter.ScaleType;
 import io.fotoapparat.parameter.update.UpdateRequest;
 import io.fotoapparat.photo.BitmapPhoto;
-import io.fotoapparat.preview.Frame;
-import io.fotoapparat.preview.FrameProcessor;
 import io.fotoapparat.result.PendingResult;
 import io.fotoapparat.result.PhotoResult;
 import io.fotoapparat.view.CameraView;
+import io.fotoapparat.preview.Frame;
+import io.fotoapparat.preview.FrameProcessor;
 
 import static io.fotoapparat.log.Loggers.fileLogger;
 import static io.fotoapparat.log.Loggers.logcat;
@@ -39,22 +39,26 @@ import static io.fotoapparat.parameter.selector.FlashSelectors.torch;
 import static io.fotoapparat.parameter.selector.FocusModeSelectors.autoFocus;
 import static io.fotoapparat.parameter.selector.FocusModeSelectors.continuousFocus;
 import static io.fotoapparat.parameter.selector.FocusModeSelectors.fixed;
-import static io.fotoapparat.parameter.selector.LensPositionSelectors.lensPosition;
+import static io.fotoapparat.parameter.selector.LensPositionSelectors.back;
 import static io.fotoapparat.parameter.selector.PreviewFpsRangeSelectors.rangeWithHighestFps;
 import static io.fotoapparat.parameter.selector.Selectors.firstAvailable;
 import static io.fotoapparat.parameter.selector.SensorSensitivitySelectors.highestSensorSensitivity;
 import static io.fotoapparat.parameter.selector.SizeSelectors.biggestSize;
 import static io.fotoapparat.result.transformer.SizeTransformers.scaled;
 
+/**
+ * Inspired by https://github.com/Fotoapparat/Fotoapparat/blob/master/sample/src/main/java/io/fotoapparat/sample/MainActivity.java
+ */
+
 public class CameraAcc extends AppCompatActivity {
 
-    private final PermissionsDelegate permissionsDelegate = new PermissionsDelegate(this);
+    private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private boolean hasCameraPermission;
     private CameraView cameraView;
 
     private FotoapparatSwitcher fotoapparatSwitcher;
-    private Fotoapparat frontFotoapparat;
-    private Fotoapparat backFotoapparat;
+    private Fotoapparat fotoapparat;
+    private PhotoResult photoResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +66,7 @@ public class CameraAcc extends AppCompatActivity {
         setContentView(R.layout.activity_camera_acc);
 
         cameraView = (CameraView) findViewById(R.id.camera_view);
-        hasCameraPermission = permissionsDelegate.hasCameraPermission();
+        hasCameraPermission = permissionsHandler.hasCameraPermission();
 
         if (hasCameraPermission)
         {
@@ -70,45 +74,18 @@ public class CameraAcc extends AppCompatActivity {
         }
         else
         {
-            permissionsDelegate.requestCameraPermission();
+            permissionsHandler.requestCameraPermission();
         }
 
         setupFotoapparat();
-
-        takePictureOnClick();
-        focusOnLongClick();
-        switchCameraOnClick();
+        takePictureOnButtonClick();
+        focusOnViewClick();
         toggleTorchOnSwitch();
-        zoomSeekBar();
     }
 
     private void setupFotoapparat() {
-        frontFotoapparat = createFotoapparat(LensPosition.FRONT);
-        backFotoapparat = createFotoapparat(LensPosition.BACK);
-        fotoapparatSwitcher = FotoapparatSwitcher.withDefault(backFotoapparat);
-    }
-
-    private void zoomSeekBar() {
-        SeekBar seekBar = (SeekBar) findViewById(R.id.zoomSeekBar);
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                fotoapparatSwitcher
-                .getCurrentFotoapparat()
-                .setZoom(progress / (float) seekBar.getMax());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // Do nothing
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // Do nothing
-            }
-        });
+        fotoapparat = createFotoapparat();
+        fotoapparatSwitcher = FotoapparatSwitcher.withDefault(fotoapparat);
     }
 
     private void toggleTorchOnSwitch() {
@@ -132,38 +109,18 @@ public class CameraAcc extends AppCompatActivity {
         });
     }
 
-    private void switchCameraOnClick() {
-        View switchCameraButton = findViewById(R.id.switchCamera);
-        switchCameraButton.setVisibility(
-            canSwitchCameras()
-            ? View.VISIBLE
-            : View.GONE
-            );
-        switchCameraOnClick(switchCameraButton);
-    }
-
-    private void switchCameraOnClick(View view) {
-        view.setOnClickListener(new View.OnClickListener() {
+    private void focusOnViewClick() {
+        cameraView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchCamera();
-            }
-        });
-    }
-
-    private void focusOnLongClick() {
-        cameraView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
                 fotoapparatSwitcher.getCurrentFotoapparat().autoFocus();
-
-                return true;
             }
         });
     }
 
-    private void takePictureOnClick() {
-        cameraView.setOnClickListener(new View.OnClickListener() {
+    private void takePictureOnButtonClick() {
+        ImageButton shutterButton = (ImageButton) findViewById(R.id.CameraButton01);
+        shutterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 takePicture();
@@ -171,18 +128,14 @@ public class CameraAcc extends AppCompatActivity {
         });
     }
 
-    private boolean canSwitchCameras() {
-        return frontFotoapparat.isAvailable() == backFotoapparat.isAvailable();
-    }
-
-    private Fotoapparat createFotoapparat(LensPosition position) {
+    private Fotoapparat createFotoapparat() {
         return Fotoapparat
                .with(this)
-               .cameraProvider(CameraProviders.v1())  // change this to v2 to test Camera2 API
+               .cameraProvider(CameraProviders.v2(this))  // Min SDK è 21, quindi si va di api2
                .into(cameraView)
                .previewScaleType(ScaleType.CENTER_CROP)
                .photoSize(standardRatio(biggestSize()))
-               .lensPosition(lensPosition(position))
+               .lensPosition(back())
                .focusMode(firstAvailable(
                               continuousFocus(),
                               autoFocus(),
@@ -211,13 +164,7 @@ public class CameraAcc extends AppCompatActivity {
     }
 
     private void takePicture() {
-        PhotoResult photoResult = fotoapparatSwitcher.getCurrentFotoapparat().takePicture();
-
-        photoResult.saveToFile(new File(
-                                   getExternalFilesDir("photos"),
-                                   "photo.jpg"
-                                   ));
-
+        this.photoResult = fotoapparatSwitcher.getCurrentFotoapparat().takePicture();
         photoResult
         .toBitmap(scaled(0.25f))
         .whenAvailable(new PendingResult.Callback<BitmapPhoto>() {
@@ -229,17 +176,25 @@ public class CameraAcc extends AppCompatActivity {
                 imageView.setRotation(-result.rotationDegrees);
             }
         });
+        if (!permissionsHandler.hasStoragePermission())
+        {
+            permissionsHandler.requestStoragePermission();
+        }
+        saveFile();
+
     }
 
-    private void switchCamera() {
-        if (fotoapparatSwitcher.getCurrentFotoapparat() == frontFotoapparat)
-        {
-            fotoapparatSwitcher.switchTo(backFotoapparat);
-        }
-        else
-        {
-            fotoapparatSwitcher.switchTo(frontFotoapparat);
-        }
+    //Prova con salvataggio file casuale
+    private void saveFile() {
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/saved_images");
+        myDir.mkdirs();
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        String fname = "Image-" + n + ".jpg";
+        File file = new File (myDir, fname);
+        photoResult.saveToFile(file);
     }
 
     @Override
@@ -265,10 +220,17 @@ public class CameraAcc extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (permissionsDelegate.resultGranted(requestCode, permissions, grantResults))
+        if (permissionsHandler.resultGranted(requestCode, permissions, grantResults))
         {
-            fotoapparatSwitcher.start();
-            cameraView.setVisibility(View.VISIBLE);
+            if (requestCode == PermissionsHandler.REQUEST_CAMERA_CODE)
+            {
+                fotoapparatSwitcher.start();
+                cameraView.setVisibility(View.VISIBLE);
+            }
+            else if (requestCode == PermissionsHandler.REQUEST_STORAGE_CODE)
+            {
+                saveFile();
+            }
         }
     }
 
