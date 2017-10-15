@@ -19,11 +19,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
@@ -42,8 +39,6 @@ public class ReceiptList extends AppCompatActivity {
             return false;
         }
     };
-
-
 
 
     private PhotosAdapter adapter;
@@ -70,6 +65,18 @@ public class ReceiptList extends AppCompatActivity {
         photoListView.setItemAnimator(new DefaultItemAnimator());
         photoListView.setAdapter(adapter);
 
+
+        //debug
+        findViewById(R.id.testbtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ReceiptList.this, EditActivity.class);
+                //Glide.with(ReceiptList.this).load(R.drawable.ic_test_scontrino).into(new SimpleTarget(200, 266) {
+                intent.putExtra("PhotoItem", new PhotoItem(new File(Environment.getExternalStorageDirectory().getPath() + "/Spaventapasseri/test.png")));
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -82,10 +89,13 @@ public class ReceiptList extends AppCompatActivity {
     //   Si occupera' Glide di caricarle e mostrarle ottimizzando la memoria
     private void fetchPhotosInfo() {
         //File[] photos = new File(Environment.getExternalStorageDirectory(), "Spaventapasseri").listFiles(IMAGE_FILTER);
-
-        //boolean a  = new File(Environment.getExternalStorageDirectory(), "Spaventapasseri").exists();
-        //Toast.makeText(this, String.valueOf(a), Toast.LENGTH_LONG).show();
-
+//        File[] photos = getFilesDir().listFiles(IMAGE_FILTER);
+//
+//        //boolean a  = new File(Environment.getExternalStorageDirectory(), "Spaventapasseri").exists();
+//        Toast.makeText(this, String.valueOf(getFilesDir()), Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, String.valueOf(new File(Environment.getExternalStorageDirectory(), "Spaventapasseri")), Toast.LENGTH_LONG).show();
+//
+//
 //        List<PhotoItem> photoList = new ArrayList<>();
 //        for (File file : photos) {
 //            photoList.add(new PhotoItem(file));

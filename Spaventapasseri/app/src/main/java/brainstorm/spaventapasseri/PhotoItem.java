@@ -1,10 +1,11 @@
 package brainstorm.spaventapasseri;
 
 import java.io.File;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-class PhotoItem
+class PhotoItem implements Serializable
 {
     private File file;
     private String title;
@@ -56,7 +57,8 @@ class PhotoItem
 
     BigDecimal getAmount()
     {
-        return amount;
+        //debug
+        return new BigDecimal(3.14f);
     }
 
     void setAmount(BigDecimal amount)
