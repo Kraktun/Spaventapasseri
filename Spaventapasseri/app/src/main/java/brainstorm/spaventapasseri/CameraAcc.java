@@ -131,7 +131,8 @@ public class CameraAcc extends AppCompatActivity {
     private Fotoapparat createFotoapparat() {
         return Fotoapparat
                .with(this)
-               .cameraProvider(CameraProviders.v2(this))  // Min SDK è 21, quindi si va di api2
+               .cameraProvider(CameraProviders.v1())  // Min SDK è 21, quindi si va di api2
+                //Reverted to api1 for strange behaviour
                .into(cameraView)
                .previewScaleType(ScaleType.CENTER_CROP)
                .photoSize(standardRatio(biggestSize()))
@@ -180,7 +181,8 @@ public class CameraAcc extends AppCompatActivity {
         {
             permissionsHandler.requestStoragePermission();
         }
-        saveFile();
+        else
+            saveFile();
 
     }
 
@@ -227,9 +229,11 @@ public class CameraAcc extends AppCompatActivity {
                 fotoapparatSwitcher.start();
                 cameraView.setVisibility(View.VISIBLE);
             }
-            else if (requestCode == PermissionsHandler.REQUEST_STORAGE_CODE)
+        }
+        else {
+            if (requestCode == PermissionsHandler.REQUEST_STORAGE_CODE)
             {
-                saveFile();
+                Toast.makeText(this, R.string.no_storage_permission, Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -2,4 +2,6 @@
     <string name="app_name">Spaventapasseri</string>
     <string name="action_settings">Settings</string>
     <string name="receipt_list_title">I miei Scontrini</string>
+    <string name="no_camera_permission">Camera permission not granted</string>
+    <string name="no_storage_permission">Storage permission not granted \nyou won\'t be able to use the app</string>
 </resources>
