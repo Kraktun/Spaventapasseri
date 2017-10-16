@@ -53,6 +53,7 @@ public class ReceiptList extends AppCompatActivity {
     File appDir = new File(Environment.getExternalStorageDirectory(), "ScontrApp");
 
 
+    private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
     private List<PhotoItem> photoList;
     private SortMode sortMode;
