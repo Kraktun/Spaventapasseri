@@ -1,7 +1,6 @@
 //R  esempio layout a tessere: https://www.androidhive.info/2016/05/android-working-with-card-view-and-recycler-view/
-
-
 package brainstorm.spaventapasseri;
+
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,8 +36,10 @@ public class ReceiptList extends AppCompatActivity {
         final String[] EXTENSIONS = new String[] { "gif", "png", "bmp", "jpg", "jpeg" };
         @Override
         public boolean accept(final File dir, final String name) {
-            for (final String ext : EXTENSIONS) {
-                if (name.endsWith("." + ext)) {
+            for (final String ext : EXTENSIONS)
+            {
+                if (name.endsWith("." + ext))
+                {
                     return true;
                 }
             }
@@ -48,7 +49,6 @@ public class ReceiptList extends AppCompatActivity {
 
 
     public static final String saveFolderName = "ScontrApp";
-
     File appDir = new File(Environment.getExternalStorageDirectory(), saveFolderName);
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
@@ -63,13 +63,10 @@ public class ReceiptList extends AppCompatActivity {
         setTitle(R.string.receipt_list_title); //R  Non riesco a cambiare il titolo in AndroidManifest senza cambiare il nome dell'app
         setContentView(R.layout.activity_receipt_list);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
-
         prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
         prefsEditor = prefs.edit();
         sortMode = SortMode.values()[prefs.getInt("sort_mode", SortMode.byDate.ordinal())];
-
         //appDir = new File(prefs.getString("app_dir", getFilesDir().getAbsolutePath()));
-
         if (!permissionsHandler.hasStoragePermission())
         {
             permissionsHandler.requestStoragePermission();
@@ -87,9 +84,7 @@ public class ReceiptList extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         adapter = new PhotosAdapter(this);
-
         RecyclerView photoListView = (RecyclerView) findViewById(R.id.photoListView);
         photoListView.setLayoutManager(new GridLayoutManager(this, 2));
         photoListView.setItemAnimator(new DefaultItemAnimator());
@@ -99,7 +94,8 @@ public class ReceiptList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (permissionsHandler.hasStoragePermission()) {
+        if (permissionsHandler.hasStoragePermission())
+        {
             fetchPhotosInfo();
         }
         else
@@ -109,15 +105,14 @@ public class ReceiptList extends AppCompatActivity {
     //R  Questo metodo trova le foto e salva le loro informazioni.
     //   Si occupera' Glide di caricarle e mostrarle ottimizzando la memoria
     private void fetchPhotosInfo() {
-        //Toast.makeText(this, appDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
-        if (appDir.exists()) {
+        if (appDir.exists())
+        {
             File[] photos = appDir.listFiles(IMAGE_FILTER);
-
             photoList = new ArrayList<>();
-            for (File file : photos) {
+            for (File file : photos)
+            {
                 photoList.add(new PhotoItem(file));
             }
-
             PhotoItem.sort(photoList, sortMode);
             adapter.setPhotoList(photoList);
         }
@@ -125,7 +120,6 @@ public class ReceiptList extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_receipt_list, menu);
         return true;
     }
@@ -133,38 +127,35 @@ public class ReceiptList extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_sort) {
-            String[] options = new String[]{
-                    getResources().getString(R.string.sort_name),
-                    getResources().getString(R.string.sort_amount),
-                    getResources().getString(R.string.sort_date)
+        if (id == R.id.action_sort)
+        {
+            String[] options = new String[] {
+                getResources().getString(R.string.sort_name),
+                //getResources().getString(R.string.sort_amount),
+                getResources().getString(R.string.sort_date)
             };
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.action_sort)
-                    .setSingleChoiceItems(options, sortMode.ordinal(), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            prefsEditor.putInt("sort_mode", which);
-                            prefsEditor.apply();
-
-                            sortMode = SortMode.values()[which];
-                            PhotoItem.sort(photoList, sortMode);
-                            adapter.setPhotoList(photoList);
-                        }
-                    })
-                    .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .show();
+            .setTitle(R.string.action_sort)
+            .setSingleChoiceItems(options, sortMode.ordinal(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    prefsEditor.putInt("sort_mode", which);
+                    prefsEditor.apply();
+                    sortMode = SortMode.values()[which];
+                    PhotoItem.sort(photoList, sortMode);
+                    adapter.setPhotoList(photoList);
+                }
+            })
+            .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            })
+            .show();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-
 
     class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.PhotoCardHolder> {
 
@@ -173,22 +164,21 @@ public class ReceiptList extends AppCompatActivity {
 
         class PhotoCardHolder extends RecyclerView.ViewHolder {
             TextView title;
-            ImageView thumbnail;//, dotsMenu;
+            ImageView thumbnail;
 
             PhotoCardHolder(View view) {
-                super(view);
+                super( view );
                 title = (TextView) view.findViewById(R.id.title);
                 thumbnail = (ImageView)view.findViewById(R.id.thumbnail);
             }
         }
-
 
         PhotosAdapter(Context context) {
             this.context = context;
             this.photoList = new ArrayList<>();
         }
 
-        void setPhotoList(List<PhotoItem> photoList){
+        void setPhotoList(List<PhotoItem> photoList) {
             this.photoList = photoList;
             notifyDataSetChanged();
         }
@@ -196,7 +186,7 @@ public class ReceiptList extends AppCompatActivity {
         @Override
         public PhotoCardHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.photo_card, parent, false);
+                            .inflate(R.layout.photo_card, parent, false);
             return new PhotoCardHolder(itemView);
         }
 
@@ -207,8 +197,8 @@ public class ReceiptList extends AppCompatActivity {
 
             //R  thumbnail ratio 10%
             Glide.with(context).load(currentItem.getFile())
-                               .thumbnail(1.f)
-                               .into(holder.thumbnail);
+                .thumbnail(1.f)
+                .into(holder.thumbnail);
 
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -218,56 +208,13 @@ public class ReceiptList extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-
-//            holder.dotsMenu.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    showPopupMenu(holder.dotsMenu);
-//                }
-//            });
         }
-
-
-//        /**
-//         * Showing popup menu when tapping on 3 dots
-//         */
-//        private void showPopupMenu(View view) {
-//            // inflate menu
-//            PopupMenu popup = new PopupMenu(context, view);
-//            popup.getMenuInflater().inflate(R.menu.menu_album, popup.getMenu());
-//            popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
-//            popup.show();
-//        }
-//
-//        /**
-//         * Click listener for popup menu items
-//         */
-//        class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-//
-//            public MyMenuItemClickListener() {
-//            }
-//
-//            @Override
-//            public boolean onMenuItemClick(MenuItem menuItem) {
-//                switch (menuItem.getItemId()) {
-//                    case R.id.action_add_favourite:
-//                        Toast.makeText(mContext, "Add to favourite", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.action_play_next:
-//                        Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    default:
-//                }
-//                return false;
-//            }
-//        }
 
         @Override
         public int getItemCount() {
             return photoList.size();
         }
     }
-
 }
 
 

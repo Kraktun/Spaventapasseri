@@ -1,14 +1,9 @@
 package brainstorm.spaventapasseri;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
@@ -20,12 +15,9 @@ import android.widget.Toast;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Random;
 
 import io.fotoapparat.Fotoapparat;
 import io.fotoapparat.FotoapparatSwitcher;
-import io.fotoapparat.error.CameraErrorCallback;
-import io.fotoapparat.hardware.CameraException;
 import io.fotoapparat.hardware.provider.CameraProviders;
 import io.fotoapparat.parameter.ScaleType;
 import io.fotoapparat.parameter.update.UpdateRequest;
@@ -33,8 +25,6 @@ import io.fotoapparat.photo.BitmapPhoto;
 import io.fotoapparat.result.PendingResult;
 import io.fotoapparat.result.PhotoResult;
 import io.fotoapparat.view.CameraView;
-import io.fotoapparat.preview.Frame;
-import io.fotoapparat.preview.FrameProcessor;
 
 import static io.fotoapparat.log.Loggers.fileLogger;
 import static io.fotoapparat.log.Loggers.logcat;
@@ -62,25 +52,28 @@ public class CameraAcc extends AppCompatActivity {
 
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private boolean hasCameraPermission;
+    private boolean isWaitingSave = false;
     private CameraView cameraView;
     private final String imagePrefix = "Scontrino_";
     private final String imageExtension = ".jpg";
-
     private FotoapparatSwitcher fotoapparatSwitcher;
     private Fotoapparat fotoapparat;
     private PhotoResult photoResult;
 
+    /**
+     * Creation instance
+     * @author See credits
+     * @author M
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_acc);
         PhotoItem lastPhotoItem;
         if (getIntent().hasExtra("PhotoItem"))
-        lastPhotoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
-
+            lastPhotoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
         cameraView = (CameraView) findViewById(R.id.camera_view);
         hasCameraPermission = permissionsHandler.hasCameraPermission();
-
         if (hasCameraPermission)
         {
             cameraView.setVisibility(View.VISIBLE);
@@ -89,21 +82,27 @@ public class CameraAcc extends AppCompatActivity {
         {
             permissionsHandler.requestCameraPermission();
         }
-
         setupFotoapparat();
         takePictureOnButtonClick();
         focusOnViewClick();
         toggleTorchOnSwitch();
     }
 
+    /**
+     * Initialize Fotoapparat and FotoapparatSwitcher
+     * @author See credits
+     */
     private void setupFotoapparat() {
         fotoapparat = createFotoapparat();
         fotoapparatSwitcher = FotoapparatSwitcher.withDefault(fotoapparat);
     }
 
+    /**
+     * Enable/disable flash
+     * @author See credits
+     */
     private void toggleTorchOnSwitch() {
         SwitchCompat torchSwitch = (SwitchCompat) findViewById(R.id.torchSwitch);
-
         torchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -122,6 +121,10 @@ public class CameraAcc extends AppCompatActivity {
         });
     }
 
+    /**
+     * Force autofocus when screen clicked
+     * @author See credits
+     */
     private void focusOnViewClick() {
         cameraView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +134,10 @@ public class CameraAcc extends AppCompatActivity {
         });
     }
 
+    /**
+     * Take picture on button clicked
+     * @author See credits
+     */
     private void takePictureOnButtonClick() {
         ImageButton shutterButton = (ImageButton) findViewById(R.id.CameraButton01);
         shutterButton.setOnClickListener(new View.OnClickListener() {
@@ -141,11 +148,15 @@ public class CameraAcc extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initialize fotoapparat
+     * @author See credits
+     * @author M
+     */
     private Fotoapparat createFotoapparat() {
         return Fotoapparat
                .with(this)
-               .cameraProvider(CameraProviders.v1())  // Min SDK è 21, quindi si va di api2
-                //Reverted to api1 for strange behaviour
+               .cameraProvider(CameraProviders.v1())  //API2 have issues with flash
                .into(cameraView)
                .previewScaleType(ScaleType.CENTER_CROP)
                .photoSize(standardRatio(biggestSize()))
@@ -163,21 +174,24 @@ public class CameraAcc extends AppCompatActivity {
                           ))
                .previewFpsRange(rangeWithHighestFps())
                .sensorSensitivity(highestSensorSensitivity())
-               //.frameProcessor(new SampleFrameProcessor())
                .logger(loggers(
                            logcat(),
                            fileLogger(this)
                            ))
                /*.cameraErrorCallback(new CameraErrorCallback() {
-            @Override
-            public void onError(CameraException e) {
-                Toast.makeText(CameraAcc.this, e.toString(), Toast.LENGTH_LONG).show();
-            }
-
-        }) */
+                  @Override
+                  public void onError(CameraException e) {
+                  Toast.makeText(CameraAcc.this, e.toString(), Toast.LENGTH_LONG).show();
+                  }
+                  }) */
                .build();
     }
 
+    /**
+     * Take picture
+     * @author See credits
+     * @author M
+     */
     private void takePicture() {
         this.photoResult = fotoapparatSwitcher.getCurrentFotoapparat().takePicture();
         photoResult
@@ -186,28 +200,31 @@ public class CameraAcc extends AppCompatActivity {
             @Override
             public void onResult(BitmapPhoto result) {
                 ImageView imageView = (ImageView) findViewById(R.id.result);
-
                 imageView.setImageBitmap(result.bitmap);
                 imageView.setRotation(-result.rotationDegrees);
             }
         });
         if (!permissionsHandler.hasStoragePermission())
         {
+            isWaitingSave = true;
             permissionsHandler.requestStoragePermission();
         }
         else
             saveFile();
-
     }
 
-
+    /**
+     * Save picture
+     * @author M
+     */
     private void saveFile() {
         String root = Environment.getExternalStorageDirectory().toString();
         File mainDir = new File(root + "/" + ReceiptList.saveFolderName);
         boolean success = true;
         if (!mainDir.exists())
             success = mainDir.mkdirs();
-        if (success) {
+        if (success)
+        {
             Calendar cal = Calendar.getInstance();
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(cal.getTime());
             String fname = imagePrefix + timeStamp + imageExtension;
@@ -215,7 +232,7 @@ public class CameraAcc extends AppCompatActivity {
             photoResult.saveToFile(file);
         }
         else
-            Toast.makeText(this, R.string.no_storage_permission, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.error_saving_file, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -236,6 +253,11 @@ public class CameraAcc extends AppCompatActivity {
         }
     }
 
+    /**
+     * Manage permissions
+     * @author See credits
+     * @author M
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -248,27 +270,24 @@ public class CameraAcc extends AppCompatActivity {
                 fotoapparatSwitcher.start();
                 cameraView.setVisibility(View.VISIBLE);
             }
+            else if (requestCode == PermissionsHandler.REQUEST_STORAGE_CODE && isWaitingSave)
+            {
+                isWaitingSave = false;
+                saveFile();
+            }
         }
-        else {
+        else
+        {
             if (requestCode == PermissionsHandler.REQUEST_STORAGE_CODE)
             {
-                Toast.makeText(this, R.string.no_storage_permission + "\n" + R.string.ask_permission, Toast.LENGTH_LONG).show();
+                String text = getString(R.string.no_storage_permission) + "\n" + getString(R.string.ask_permission);
+                Toast.makeText(this, text, Toast.LENGTH_LONG).show();
             }
             else if (requestCode == PermissionsHandler.REQUEST_CAMERA_CODE)
             {
-                Toast.makeText(this, R.string.no_camera_permission + "\n" + R.string.ask_permission, Toast.LENGTH_LONG).show();
+                String text = getString(R.string.no_camera_permission) + "\n" + getString(R.string.ask_permission);
+                Toast.makeText(this, text, Toast.LENGTH_LONG).show();
             }
         }
-
     }
-
-    private class SampleFrameProcessor implements FrameProcessor {
-
-        @Override
-        public void processFrame(Frame frame) {
-            // Perform frame processing, if needed
-        }
-
-    }
-
 }
