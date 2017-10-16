@@ -31,7 +31,7 @@ class PhotoItem implements Serializable
         static final Comparator<PhotoItem> byAmount = new Comparator<PhotoItem>() {
             @Override
             public int compare(PhotoItem p1, PhotoItem p2) {
-                return 0;                                        //todo
+                return p1.getAmount().compareTo(p2.getAmount());
             }
         };
 
@@ -51,11 +51,11 @@ class PhotoItem implements Serializable
                 Collections.sort(list, PIComps.byTitle);
                 break;
             case byAmount:
-                Collections.sort(list, PIComps.byTitle);
+                Collections.sort(list, PIComps.byAmount);
                 break;
             case byDate:
             default:
-                Collections.sort(list, PIComps.byTitle);
+                Collections.sort(list, PIComps.byDate);
                 break;
         }
     }
@@ -67,12 +67,7 @@ class PhotoItem implements Serializable
 
     private Date date;
     private String stringDate;
-
-
-    public static class ComparatorProvider
-    {
-
-    }
+    private long longDate;
 
     PhotoItem(File file)
     {
