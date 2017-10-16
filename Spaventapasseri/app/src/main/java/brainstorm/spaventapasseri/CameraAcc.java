@@ -66,6 +66,7 @@ public class CameraAcc extends AppCompatActivity {
         setContentView(R.layout.activity_camera_acc);
 
         PhotoItem lastPhotoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
+        // R  se lastPhotoItem==null non mettere l'anteprima
 
         cameraView = (CameraView) findViewById(R.id.camera_view);
         hasCameraPermission = permissionsHandler.hasCameraPermission();

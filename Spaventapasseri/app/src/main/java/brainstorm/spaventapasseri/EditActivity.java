@@ -16,7 +16,7 @@ public class EditActivity extends AppCompatActivity {
         photoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
 
         //R  usa questo per il debug
-        Toast.makeText(this, photoItem.getTitle(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, photoItem.getStringDate(), Toast.LENGTH_LONG).show();
 
     }
 

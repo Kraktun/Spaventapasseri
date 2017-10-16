@@ -5,14 +5,18 @@ package brainstorm.spaventapasseri;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,6 +34,7 @@ import java.util.List;
 import com.bumptech.glide.Glide;
 
 public class ReceiptList extends AppCompatActivity {
+
     // R  https://stackoverflow.com/questions/7792942/load-all-images-from-folder-in-android
     static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
         final String[] EXTENSIONS = new String[] { "gif", "png", "bmp", "jpg", "jpeg" };
@@ -45,10 +50,14 @@ public class ReceiptList extends AppCompatActivity {
     };
 
 
+    File appDir = new File(Environment.getExternalStorageDirectory(), "ScontrApp");
+
+
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
     private List<PhotoItem> photoList;
     private SortMode sortMode;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,19 +66,23 @@ public class ReceiptList extends AppCompatActivity {
         setContentView(R.layout.activity_receipt_list);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
 
+        prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        //appDir = new File(prefs.getString("app_dir", getFilesDir().getAbsolutePath()));
+
         if (!permissionsHandler.hasStoragePermission())
         {
             permissionsHandler.requestStoragePermission();
         }
-
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<PhotoItem> listCopy = new ArrayList<>(photoList);
-                PhotoItem.sort(listCopy, SortMode.byDate);
-
                 Intent intent = new Intent(ReceiptList.this, CameraAcc.class);
-                intent.putExtra("PhotoItem", listCopy.get(0));
+                if (!photoList.isEmpty())
+                {
+                    List<PhotoItem> listCopy = new ArrayList<>(photoList);
+                    PhotoItem.sort(listCopy, SortMode.byDate);
+                    intent.putExtra("PhotoItem", listCopy.get(0));
+                }
                 startActivity(intent);
             }
         });
@@ -77,10 +90,9 @@ public class ReceiptList extends AppCompatActivity {
         adapter = new PhotosAdapter(this);
 
         RecyclerView photoListView = (RecyclerView) findViewById(R.id.photoListView);
-        photoListView.setLayoutManager(new GridLayoutManager(this, 1));
+        photoListView.setLayoutManager(new GridLayoutManager(this, 2));
         photoListView.setItemAnimator(new DefaultItemAnimator());
         photoListView.setAdapter(adapter);
-
     }
 
     @Override
@@ -92,14 +104,9 @@ public class ReceiptList extends AppCompatActivity {
     //R  Questo metodo trova le foto e salva le loro informazioni.
     //   Si occupera' Glide di caricarle e mostrarle ottimizzando la memoria
     private void fetchPhotosInfo() {
-        File appDir = new File(Environment.getExternalStorageDirectory(), "ScontrApp");
+        //Toast.makeText(this, appDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
         if (appDir.exists()) {
-            File[] photos = new File(Environment.getExternalStorageDirectory(), "ScontrApp").listFiles(IMAGE_FILTER);
-
-//
-//        Toast.makeText(this, String.valueOf(getFilesDir()), Toast.LENGTH_LONG).show();
-//        Toast.makeText(this, String.valueOf(new File(Environment.getExternalStorageDirectory(), "Spaventapasseri")), Toast.LENGTH_LONG).show();
-//
+            File[] photos = appDir.listFiles(IMAGE_FILTER);
 
             photoList = new ArrayList<>();
             for (File file : photos) {
@@ -107,35 +114,38 @@ public class ReceiptList extends AppCompatActivity {
             }
 
             PhotoItem.sort(photoList, SortMode.byDate);
-
             adapter.setPhotoList(photoList);
-
-
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        //getMenuInflater().inflate(R.menu.menu_receipt_list, menu);
-//        //return true;
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_receipt_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_sort) {
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(ReceiptList.this);
+            String[] options = new String[]{
+                    "Nome",
+                    "Importo",
+                    "Data"
+            };
+
+
+            //dialog.setSingleChoiceItems()
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
 

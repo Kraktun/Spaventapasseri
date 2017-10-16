@@ -3,6 +3,7 @@
     package="brainstorm.spaventapasseri">
 
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -23,10 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraAcc"
-            android:theme="@style/AppTheme.NoActionBar" >
-            </activity>
-        <activity android:name=".EditActivity"></activity>
+        <activity
+            android:name=".CameraAcc"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".EditActivity" />
     </application>
 
 </manifest>
