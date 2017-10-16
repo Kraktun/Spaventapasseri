@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Spaventapasseri</string>
+    <string name="app_name">ScontrApp</string>
     <string name="action_settings">Impostazioni</string>
     <string name="receipt_list_title">I miei Scontrini</string>
     <string name="no_camera_permission">Permessi fotocamera non concessi</string>
-    <string name="no_storage_permission">Permessi storage non concessi, \nnon sarai in grado di usare l\'app</string>
+    <string name="no_storage_permission">Permessi storage non concessi</string>
+    <string name="ask_permission">accetta i permessi per far funzionare l\'app correttamente</string>
+    <string name="error_saving_file">Errore salvataggio file</string>
 </resources>

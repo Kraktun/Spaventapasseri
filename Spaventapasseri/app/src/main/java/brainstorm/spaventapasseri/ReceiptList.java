@@ -44,10 +44,10 @@ public class ReceiptList extends AppCompatActivity {
         }
     };
 
-
+    public static final String saveFolderName = "ScontrApp";
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
-    private List<PhotoItem> photoList;
+    private List<PhotoItem> photoList = new ArrayList<>();
     private SortMode sortMode;
 
     @Override
@@ -61,7 +61,6 @@ public class ReceiptList extends AppCompatActivity {
         {
             permissionsHandler.requestStoragePermission();
         }
-
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +68,8 @@ public class ReceiptList extends AppCompatActivity {
                 PhotoItem.sort(listCopy, SortMode.byDate);
 
                 Intent intent = new Intent(ReceiptList.this, CameraAcc.class);
-                intent.putExtra("PhotoItem", listCopy.get(0));
+                if (listCopy.size()>0)
+                    intent.putExtra("PhotoItem", listCopy.get(0));
                 startActivity(intent);
             }
         });
@@ -86,22 +86,26 @@ public class ReceiptList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fetchPhotosInfo();
+        if (permissionsHandler.hasStoragePermission()) {
+            fetchPhotosInfo();
+        }
+        else
+            permissionsHandler.requestStoragePermission();
     }
 
     //R  Questo metodo trova le foto e salva le loro informazioni.
     //   Si occupera' Glide di caricarle e mostrarle ottimizzando la memoria
     private void fetchPhotosInfo() {
-        File appDir = new File(Environment.getExternalStorageDirectory(), "ScontrApp");
+        File appDir = new File(Environment.getExternalStorageDirectory(), saveFolderName);
         if (appDir.exists()) {
-            File[] photos = new File(Environment.getExternalStorageDirectory(), "ScontrApp").listFiles(IMAGE_FILTER);
+            File[] photos = new File(Environment.getExternalStorageDirectory(), saveFolderName).listFiles(IMAGE_FILTER);
 
 //
 //        Toast.makeText(this, String.valueOf(getFilesDir()), Toast.LENGTH_LONG).show();
 //        Toast.makeText(this, String.valueOf(new File(Environment.getExternalStorageDirectory(), "Spaventapasseri")), Toast.LENGTH_LONG).show();
 //
 
-            photoList = new ArrayList<>();
+            //photoList = new ArrayList<>();
             for (File file : photos) {
                 photoList.add(new PhotoItem(file));
             }
