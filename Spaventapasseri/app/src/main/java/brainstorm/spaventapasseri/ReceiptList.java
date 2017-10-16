@@ -50,12 +50,12 @@ public class ReceiptList extends AppCompatActivity {
     };
 
 
-    File appDir = new File(Environment.getExternalStorageDirectory(), "ScontrApp");
+    public static final String saveFolderName = "ScontrApp";
 
-
+    File appDir = new File(Environment.getExternalStorageDirectory(), saveFolderName);
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
-    private List<PhotoItem> photoList;
+    private List<PhotoItem> photoList = new ArrayList<>();
     private SortMode sortMode;
     private SharedPreferences prefs;
 
@@ -98,7 +98,11 @@ public class ReceiptList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fetchPhotosInfo();
+        if (permissionsHandler.hasStoragePermission()) {
+            fetchPhotosInfo();
+        }
+        else
+            permissionsHandler.requestStoragePermission();
     }
 
     //R  Questo metodo trova le foto e salva le loro informazioni.
@@ -108,7 +112,7 @@ public class ReceiptList extends AppCompatActivity {
         if (appDir.exists()) {
             File[] photos = appDir.listFiles(IMAGE_FILTER);
 
-            photoList = new ArrayList<>();
+            //photoList = new ArrayList<>();
             for (File file : photos) {
                 photoList.add(new PhotoItem(file));
             }
