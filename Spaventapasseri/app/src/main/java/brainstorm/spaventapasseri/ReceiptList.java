@@ -45,6 +45,7 @@ public class ReceiptList extends AppCompatActivity {
     };
 
 
+    private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
     private List<PhotoItem> photoList;
     private SortMode sortMode;
@@ -55,6 +56,11 @@ public class ReceiptList extends AppCompatActivity {
         setTitle(R.string.receipt_list_title); //R  Non riesco a cambiare il titolo in AndroidManifest senza cambiare il nome dell'app
         setContentView(R.layout.activity_receipt_list);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+
+        if (!permissionsHandler.hasStoragePermission())
+        {
+            permissionsHandler.requestStoragePermission();
+        }
 
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,8 +179,12 @@ public class ReceiptList extends AppCompatActivity {
             holder.title.setText(currentItem.getTitle());
 
             //R  thumbnail ratio 20%
+            //Glide.with(context).load(currentItem.getFile())
+            //                   .thumbnail(0.2f)
+             //                  .into(holder.thumbnail);
+
             Glide.with(context).load(currentItem.getFile())
-                               .thumbnail(0.2f)
+                               .thumbnail(1.f)
                                .into(holder.thumbnail);
 
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {

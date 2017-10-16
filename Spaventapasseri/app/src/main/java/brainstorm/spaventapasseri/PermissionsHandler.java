@@ -9,7 +9,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import static android.content.ContentValues.TAG;
 
 /**
  * Inspired by https://github.com/Fotoapparat/Fotoapparat/blob/master/sample/src/main/java/io/fotoapparat/sample/PermissionsDelegate.java
@@ -76,7 +75,7 @@ public class PermissionsHandler {
         {
             return false;
         }
-        else if (requestCode == REQUEST_STORAGE_CODE && !( permissions[0].equals(Manifest.permission.READ_EXTERNAL_STORAGE) ))
+        else if (requestCode == REQUEST_STORAGE_CODE && !( permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) ))
         {
             return false;
         }
