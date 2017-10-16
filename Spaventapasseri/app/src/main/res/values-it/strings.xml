@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="ok_string">OK</string>
+    <string name="cancel_string">Annulla</string>
     <string name="app_name">ScontrApp</string>
-    <string name="action_sort">Ordina per…</string>
+
     <string name="receipt_list_title">I miei Scontrini</string>
+    <string name="action_sort">Ordina per…</string>
+    <string name="sort_name">Nome</string>
+    <string name="sort_amount">Importo</string>
+    <string name="sort_date">Data</string>
+
     <string name="no_camera_permission">Permessi fotocamera non concessi</string>
     <string name="no_storage_permission">Permessi storage non concessi, \nnon sarai in grado di usare l\'app</string>
 </resources>

@@ -4,6 +4,7 @@
 package brainstorm.spaventapasseri;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ public class ReceiptList extends AppCompatActivity {
     private List<PhotoItem> photoList;
     private SortMode sortMode;
     private SharedPreferences prefs;
+    private SharedPreferences.Editor prefsEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,9 @@ public class ReceiptList extends AppCompatActivity {
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
 
         prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        prefsEditor = prefs.edit();
+        sortMode = SortMode.values()[prefs.getInt("sort_mode", SortMode.byDate.ordinal())];
+
         //appDir = new File(prefs.getString("app_dir", getFilesDir().getAbsolutePath()));
 
         if (!permissionsHandler.hasStoragePermission())
@@ -113,7 +118,7 @@ public class ReceiptList extends AppCompatActivity {
                 photoList.add(new PhotoItem(file));
             }
 
-            PhotoItem.sort(photoList, SortMode.byDate);
+            PhotoItem.sort(photoList, sortMode);
             adapter.setPhotoList(photoList);
         }
     }
@@ -128,19 +133,31 @@ public class ReceiptList extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_sort) {
-
-            AlertDialog.Builder dialog = new AlertDialog.Builder(ReceiptList.this);
             String[] options = new String[]{
-                    "Nome",
-                    "Importo",
-                    "Data"
+                    getResources().getString(R.string.sort_name),
+                    getResources().getString(R.string.sort_amount),
+                    getResources().getString(R.string.sort_date)
             };
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.action_sort)
+                    .setSingleChoiceItems(options, sortMode.ordinal(), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            prefsEditor.putInt("sort_mode", which);
+                            prefsEditor.apply();
 
-
-            //dialog.setSingleChoiceItems()
-
+                            sortMode = SortMode.values()[which];
+                            PhotoItem.sort(photoList, sortMode);
+                            adapter.setPhotoList(photoList);
+                        }
+                    })
+                    .setPositiveButton(R.string.ok_string, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .show();
             return true;
         }
 
