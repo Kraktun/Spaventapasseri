@@ -19,6 +19,8 @@ enum SortMode
 
 class PhotoItem implements Serializable
 {
+    //public static final
+
     private static class PIComps
     {
         static final Comparator<PhotoItem> byTitle = new Comparator<PhotoItem>() {
@@ -67,7 +69,6 @@ class PhotoItem implements Serializable
 
     private Date date;
     private String stringDate;
-    private long longDate;
 
     PhotoItem(File file)
     {
