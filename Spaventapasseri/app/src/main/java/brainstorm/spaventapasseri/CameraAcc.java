@@ -65,6 +65,8 @@ public class CameraAcc extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_acc);
 
+        PhotoItem lastPhotoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
+
         cameraView = (CameraView) findViewById(R.id.camera_view);
         hasCameraPermission = permissionsHandler.hasCameraPermission();
 
@@ -189,7 +191,7 @@ public class CameraAcc extends AppCompatActivity {
     //Prova con salvataggio file casuale
     private void saveFile() {
         String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/saved_images");
+        File myDir = new File(root + "/ScontrApp");
         myDir.mkdirs();
         Random generator = new Random();
         int n = 10000;
