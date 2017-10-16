@@ -280,11 +280,13 @@ public class CameraAcc extends AppCompatActivity {
         {
             if (requestCode == PermissionsHandler.REQUEST_STORAGE_CODE)
             {
-                Toast.makeText(this, R.string.no_storage_permission + "\n" + R.string.ask_permission, Toast.LENGTH_LONG).show();
+                String text = getString(R.string.no_storage_permission) + "\n" + getString(R.string.ask_permission);
+                Toast.makeText(this, text, Toast.LENGTH_LONG).show();
             }
             else if (requestCode == PermissionsHandler.REQUEST_CAMERA_CODE)
             {
-                Toast.makeText(this, R.string.no_camera_permission + "\n" + R.string.ask_permission, Toast.LENGTH_LONG).show();
+                String text = getString(R.string.no_camera_permission) + "\n" + getString(R.string.ask_permission);
+                Toast.makeText(this, text, Toast.LENGTH_LONG).show();
             }
         }
     }
