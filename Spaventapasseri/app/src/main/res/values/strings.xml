@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ScontrApp</string>
-    <string name="action_sort">Ordina per…</string>
-    <string name="receipt_list_title">I miei Scontrini</string>
+    <string name="action_sort">Sort by…</string>
+    <string name="receipt_list_title">My Receipts</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="no_camera_permission">Camera permission not granted</string>
+    <string name="no_storage_permission">Storage permission not granted \nyou won\'t be able to use the app</string>
 </resources>

@@ -68,6 +68,10 @@ public class ReceiptList extends AppCompatActivity {
         prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
         //appDir = new File(prefs.getString("app_dir", getFilesDir().getAbsolutePath()));
 
+        if (!permissionsHandler.hasStoragePermission())
+        {
+            permissionsHandler.requestStoragePermission();
+        }
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,8 +92,6 @@ public class ReceiptList extends AppCompatActivity {
         photoListView.setLayoutManager(new GridLayoutManager(this, 2));
         photoListView.setItemAnimator(new DefaultItemAnimator());
         photoListView.setAdapter(adapter);
-
-        new PermissionsHandler(this).requestStoragePermission();
     }
 
     @Override
@@ -186,8 +188,12 @@ public class ReceiptList extends AppCompatActivity {
             holder.title.setText(currentItem.getTitle());
 
             //R  thumbnail ratio 20%
+            //Glide.with(context).load(currentItem.getFile())
+            //                   .thumbnail(0.2f)
+             //                  .into(holder.thumbnail);
+
             Glide.with(context).load(currentItem.getFile())
-                               .thumbnail(0.2f)
+                               .thumbnail(1.f)
                                .into(holder.thumbnail);
 
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
