@@ -205,11 +205,7 @@ public class ReceiptList extends AppCompatActivity {
             final PhotoItem currentItem = photoList.get(position);
             holder.title.setText(currentItem.getTitle());
 
-            //R  thumbnail ratio 20%
-            //Glide.with(context).load(currentItem.getFile())
-            //                   .thumbnail(0.2f)
-             //                  .into(holder.thumbnail);
-
+            //R  thumbnail ratio 10%
             Glide.with(context).load(currentItem.getFile())
                                .thumbnail(1.f)
                                .into(holder.thumbnail);
