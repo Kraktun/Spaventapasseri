@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">ScontrApp</string>
-    <string name="action_settings">Settings</string>
-    <string name="receipt_list_title">My receipts</string>
+    <string name="action_sort">Sort by…</string>
+    <string name="receipt_list_title">My Receipts</string>
+    <string name="title_activity_main">MainActivity</string>
     <string name="no_camera_permission">Camera permission not granted</string>
     <string name="no_storage_permission">Storage permission not granted</string>
     <string name="ask_permission">please provide permission for the app to work</string>
     <string name="error_saving_file">There was an error saving file</string>
-    <string name="confirm">Confirm</string>
-    <string name="exit">Exit</string>
 </resources>
