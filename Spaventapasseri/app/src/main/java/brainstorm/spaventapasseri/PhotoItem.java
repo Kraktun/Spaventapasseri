@@ -1,19 +1,18 @@
 package brainstorm.spaventapasseri;
 
+
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-
 enum SortMode
 {
     byTitle,
-    byAmount,
+    //byAmount,
     byDate
 }
 
@@ -49,16 +48,18 @@ class PhotoItem implements Serializable
     {
         switch (mode)
         {
-            case byTitle:
-                Collections.sort(list, PIComps.byTitle);
-                break;
-            case byAmount:
-                Collections.sort(list, PIComps.byAmount);
-                break;
-            case byDate:
-            default:
-                Collections.sort(list, PIComps.byDate);
-                break;
+        case byTitle:
+            Collections.sort(list, PIComps.byTitle);
+            break;
+        /*
+           case byAmount:
+            Collections.sort(list, PIComps.byAmount);
+            break;
+         */
+        case byDate:
+        default:
+            Collections.sort(list, PIComps.byDate);
+            break;
         }
     }
 
@@ -98,7 +99,7 @@ class PhotoItem implements Serializable
     boolean setTitle(String title)
     {
         return file.renameTo(new File(file.getParent(),
-                        title + file.toString().substring(file.toString().lastIndexOf("."))));
+                                      title + file.toString().substring(file.toString().lastIndexOf("."))));
     }
 
     Date getDate()

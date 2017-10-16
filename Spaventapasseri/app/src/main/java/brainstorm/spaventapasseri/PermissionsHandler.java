@@ -9,11 +9,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-
 /**
+ * @author M
  * Inspired by https://github.com/Fotoapparat/Fotoapparat/blob/master/sample/src/main/java/io/fotoapparat/sample/PermissionsDelegate.java
  */
-
 public class PermissionsHandler {
 
     public static final int REQUEST_CAMERA_CODE = 15;
