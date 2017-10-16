@@ -3,10 +3,63 @@ package brainstorm.spaventapasseri;
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+
+
+enum SortMode
+{
+    byTitle,
+    byAmount,
+    byDate
+}
 
 class PhotoItem implements Serializable
 {
+    private static class PIComps
+    {
+        static final Comparator<PhotoItem> byTitle = new Comparator<PhotoItem>() {
+            @Override
+            public int compare(PhotoItem p1, PhotoItem p2) {
+                return p1.getTitle().compareTo(p2.getTitle());
+            }
+        };
+
+        static final Comparator<PhotoItem> byAmount = new Comparator<PhotoItem>() {
+            @Override
+            public int compare(PhotoItem p1, PhotoItem p2) {
+                return 0;                                        //todo
+            }
+        };
+
+        static final Comparator<PhotoItem> byDate = new Comparator<PhotoItem>() {
+            @Override
+            public int compare(PhotoItem p1, PhotoItem p2) {
+                return -p1.getDate().compareTo(p2.getDate()); //R  il segno meno e' per invertire l'ordine
+            }
+        };
+    }
+
+    static void sort(List<PhotoItem> list, SortMode mode)
+    {
+        switch (mode)
+        {
+            case byTitle:
+                Collections.sort(list, PIComps.byTitle);
+                break;
+            case byAmount:
+                Collections.sort(list, PIComps.byTitle);
+                break;
+            case byDate:
+            default:
+                Collections.sort(list, PIComps.byTitle);
+                break;
+        }
+    }
+
     private File file;
     private String title;
     private BigDecimal amount;
@@ -14,6 +67,12 @@ class PhotoItem implements Serializable
 
     private Date date;
     private String stringDate;
+
+
+    public static class ComparatorProvider
+    {
+
+    }
 
     PhotoItem(File file)
     {

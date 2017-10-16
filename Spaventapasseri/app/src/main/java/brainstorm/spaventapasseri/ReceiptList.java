@@ -16,9 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,6 +47,8 @@ public class ReceiptList extends AppCompatActivity {
 
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
+    private List<PhotoItem> photoList;
+    private SortMode sortMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,11 @@ public class ReceiptList extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                List<PhotoItem> listCopy = new ArrayList<>(photoList);
+                PhotoItem.sort(listCopy, SortMode.byDate);
+
                 Intent intent = new Intent(ReceiptList.this, CameraAcc.class);
+                intent.putExtra("PhotoItem", listCopy.get(0));
                 startActivity(intent);
             }
         });
@@ -71,18 +80,6 @@ public class ReceiptList extends AppCompatActivity {
         photoListView.setLayoutManager(new GridLayoutManager(this, 1));
         photoListView.setItemAnimator(new DefaultItemAnimator());
         photoListView.setAdapter(adapter);
-
-
-        //debug
-        findViewById(R.id.testbtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ReceiptList.this, EditActivity.class);
-                //Glide.with(ReceiptList.this).load(R.drawable.ic_test_scontrino).into(new SimpleTarget(200, 266) {
-                intent.putExtra("PhotoItem", new PhotoItem(new File(Environment.getExternalStorageDirectory().getPath() + "/Spaventapasseri/test.png")));
-                startActivity(intent);
-            }
-        });
 
     }
 
@@ -95,28 +92,26 @@ public class ReceiptList extends AppCompatActivity {
     //R  Questo metodo trova le foto e salva le loro informazioni.
     //   Si occupera' Glide di caricarle e mostrarle ottimizzando la memoria
     private void fetchPhotosInfo() {
-        //File[] photos = new File(Environment.getExternalStorageDirectory(), "Spaventapasseri").listFiles(IMAGE_FILTER);
-        File[] photos = getFilesDir().listFiles(IMAGE_FILTER);
+        File appDir = new File(Environment.getExternalStorageDirectory(), "ScontrApp");
+        if (appDir.exists()) {
+            File[] photos = new File(Environment.getExternalStorageDirectory(), "ScontrApp").listFiles(IMAGE_FILTER);
+
 //
-//        //boolean a  = new File(Environment.getExternalStorageDirectory(), "Spaventapasseri").exists();
 //        Toast.makeText(this, String.valueOf(getFilesDir()), Toast.LENGTH_LONG).show();
 //        Toast.makeText(this, String.valueOf(new File(Environment.getExternalStorageDirectory(), "Spaventapasseri")), Toast.LENGTH_LONG).show();
 //
-//
-        List<PhotoItem> photoList = new ArrayList<>();
-        for (File file : photos) {
-            photoList.add(new PhotoItem(file));
-        }
 
-        Collections.sort(photoList, new Comparator<PhotoItem>() {
-            @Override
-            public int compare(PhotoItem p1, PhotoItem p2) {
-                return -p1.getDate().compareTo(p2.getDate()); //R  il segno meno e' per invertire l'ordine
+            photoList = new ArrayList<>();
+            for (File file : photos) {
+                photoList.add(new PhotoItem(file));
             }
-        });
 
-        adapter.setPhotoList(photoList);
+            PhotoItem.sort(photoList, SortMode.byDate);
 
+            adapter.setPhotoList(photoList);
+
+
+        }
     }
 
 //    @Override
@@ -150,12 +145,12 @@ public class ReceiptList extends AppCompatActivity {
         private List<PhotoItem> photoList;
 
         class PhotoCardHolder extends RecyclerView.ViewHolder {
-            //public TextView title;
+            TextView title;
             ImageView thumbnail;//, dotsMenu;
 
             PhotoCardHolder(View view) {
                 super(view);
-                //title = (TextView) view.findViewById(R.id.title);
+                title = (TextView) view.findViewById(R.id.title);
                 thumbnail = (ImageView)view.findViewById(R.id.thumbnail);
             }
         }
@@ -175,14 +170,13 @@ public class ReceiptList extends AppCompatActivity {
         public PhotoCardHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.photo_card, parent, false);
-
             return new PhotoCardHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(final PhotoCardHolder holder, int position) {
-            PhotoItem currentItem = photoList.get(position);
-            //holder.title.setText(currentItem.title);
+        public void onBindViewHolder(final PhotoCardHolder holder, final int position) {
+            final PhotoItem currentItem = photoList.get(position);
+            holder.title.setText(currentItem.getTitle());
 
             //R  thumbnail ratio 20%
             //Glide.with(context).load(currentItem.getFile())
@@ -193,6 +187,14 @@ public class ReceiptList extends AppCompatActivity {
                                .thumbnail(1.f)
                                .into(holder.thumbnail);
 
+            holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ReceiptList.this, EditActivity.class);
+                    intent.putExtra("PhotoItem", currentItem);
+                    startActivity(intent);
+                }
+            });
 
 //            holder.dotsMenu.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -201,6 +203,7 @@ public class ReceiptList extends AppCompatActivity {
 //                }
 //            });
         }
+
 
 //        /**
 //         * Showing popup menu when tapping on 3 dots
