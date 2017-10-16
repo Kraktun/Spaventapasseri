@@ -1,8 +1,14 @@
 package brainstorm.spaventapasseri;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
@@ -12,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Random;
 
 import io.fotoapparat.Fotoapparat;
@@ -55,6 +63,8 @@ public class CameraAcc extends AppCompatActivity {
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private boolean hasCameraPermission;
     private CameraView cameraView;
+    private final String imagePrefix = "Scontrino_";
+    private final String imageExtension = ".jpg";
 
     private FotoapparatSwitcher fotoapparatSwitcher;
     private Fotoapparat fotoapparat;
@@ -64,9 +74,9 @@ public class CameraAcc extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_acc);
-
-        PhotoItem lastPhotoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
-        // R  se lastPhotoItem==null non mettere l'anteprima
+        PhotoItem lastPhotoItem;
+        if (getIntent().hasExtra("PhotoItem"))
+        lastPhotoItem = (PhotoItem)getIntent().getSerializableExtra("PhotoItem");
 
         cameraView = (CameraView) findViewById(R.id.camera_view);
         hasCameraPermission = permissionsHandler.hasCameraPermission();
@@ -153,17 +163,18 @@ public class CameraAcc extends AppCompatActivity {
                           ))
                .previewFpsRange(rangeWithHighestFps())
                .sensorSensitivity(highestSensorSensitivity())
-               .frameProcessor(new SampleFrameProcessor())
+               //.frameProcessor(new SampleFrameProcessor())
                .logger(loggers(
                            logcat(),
                            fileLogger(this)
                            ))
-               .cameraErrorCallback(new CameraErrorCallback() {
+               /*.cameraErrorCallback(new CameraErrorCallback() {
             @Override
             public void onError(CameraException e) {
                 Toast.makeText(CameraAcc.this, e.toString(), Toast.LENGTH_LONG).show();
             }
-        })
+
+        }) */
                .build();
     }
 
@@ -189,17 +200,22 @@ public class CameraAcc extends AppCompatActivity {
 
     }
 
-    //Prova con salvataggio file casuale
+
     private void saveFile() {
         String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/ScontrApp");
-        myDir.mkdirs();
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-" + n + ".jpg";
-        File file = new File (myDir, fname);
-        photoResult.saveToFile(file);
+        File mainDir = new File(root + "/" + ReceiptList.saveFolderName);
+        boolean success = true;
+        if (!mainDir.exists())
+            success = mainDir.mkdirs();
+        if (success) {
+            Calendar cal = Calendar.getInstance();
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(cal.getTime());
+            String fname = imagePrefix + timeStamp + imageExtension;
+            File file = new File(mainDir, fname);
+            photoResult.saveToFile(file);
+        }
+        else
+            Toast.makeText(this, R.string.no_storage_permission, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -236,9 +252,14 @@ public class CameraAcc extends AppCompatActivity {
         else {
             if (requestCode == PermissionsHandler.REQUEST_STORAGE_CODE)
             {
-                Toast.makeText(this, R.string.no_storage_permission, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.no_storage_permission + "\n" + R.string.ask_permission, Toast.LENGTH_LONG).show();
+            }
+            else if (requestCode == PermissionsHandler.REQUEST_CAMERA_CODE)
+            {
+                Toast.makeText(this, R.string.no_camera_permission + "\n" + R.string.ask_permission, Toast.LENGTH_LONG).show();
             }
         }
+
     }
 
     private class SampleFrameProcessor implements FrameProcessor {

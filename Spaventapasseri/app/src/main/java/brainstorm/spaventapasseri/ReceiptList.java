@@ -22,14 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.security.Permission;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
@@ -51,12 +47,12 @@ public class ReceiptList extends AppCompatActivity {
     };
 
 
-    File appDir = new File(Environment.getExternalStorageDirectory(), "ScontrApp");
+    public static final String saveFolderName = "ScontrApp";
 
-
+    File appDir = new File(Environment.getExternalStorageDirectory(), saveFolderName);
     private final PermissionsHandler permissionsHandler = new PermissionsHandler(this);
     private PhotosAdapter adapter;
-    private List<PhotoItem> photoList;
+    private List<PhotoItem> photoList = new ArrayList<>();
     private SortMode sortMode;
     private SharedPreferences prefs;
     private SharedPreferences.Editor prefsEditor;
@@ -103,7 +99,11 @@ public class ReceiptList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fetchPhotosInfo();
+        if (permissionsHandler.hasStoragePermission()) {
+            fetchPhotosInfo();
+        }
+        else
+            permissionsHandler.requestStoragePermission();
     }
 
     //R  Questo metodo trova le foto e salva le loro informazioni.
@@ -152,7 +152,7 @@ public class ReceiptList extends AppCompatActivity {
                             adapter.setPhotoList(photoList);
                         }
                     })
-                    .setPositiveButton(R.string.ok_string, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         }
