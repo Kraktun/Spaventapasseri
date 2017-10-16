@@ -1,8 +1,14 @@
 <resources>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
     <string name="app_name">ScontrApp</string>
-    <string name="action_sort">Sort by…</string>
+
     <string name="receipt_list_title">My Receipts</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="action_sort">Sort by…</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_amount">Amount</string>
+    <string name="sort_date">Date</string>
+
     <string name="no_camera_permission">Camera permission not granted</string>
     <string name="no_storage_permission">Storage permission not granted</string>
     <string name="ask_permission">please provide permission for the app to work</string>
