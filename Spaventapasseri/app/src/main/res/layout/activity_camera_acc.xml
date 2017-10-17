@@ -16,41 +16,90 @@
         tools:layout_editor_absoluteY="8dp"
         tools:visibility="visible">
 
-        <TextView
-            android:id="@+id/no_permission"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="50dp"
-            android:text="@string/no_camera_permission"
-            android:textSize="20sp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/torchSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|left"
-            android:layout_margin="8dp" />
+            <View
+                android:id="@+id/gradient"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/camera_gradient"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/result"
-            android:layout_width="90dp"
-            android:layout_height="120dp"
-            android:layout_gravity="top|right" />
+            <ImageView
+                android:id="@+id/flash_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_action_flash_on" />
 
-        <ImageButton
-            android:id="@+id/CameraButton01"
-            android:layout_width="78dp"
-            android:layout_height="78dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/shutter_button_background"
-            android:backgroundTint="@android:color/black"
-            android:src="@drawable/shutter_button"
-            android:visibility="visible"
-            app:srcCompat="@drawable/camera_shutter_button_normal" />
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/torchSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="18dp"
+                app:layout_constraintLeft_toRightOf="@+id/flash_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/result"
+                android:layout_width="90dp"
+                android:layout_height="120dp"
+                android:layout_gravity="top|right"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/CameraButton01"
+                android:layout_width="78dp"
+                android:layout_height="78dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@drawable/shutter_button_background"
+                android:backgroundTint="@android:color/black"
+                android:src="@drawable/shutter_button"
+                android:visibility="visible"
+                app:srcCompat="@drawable/camera_shutter_button_normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <TextView
+                android:id="@+id/no_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/no_camera_permission"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/CameraButton01"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:visibility="visible" />
+
+        </android.support.constraint.ConstraintLayout>
+
     </io.fotoapparat.view.CameraView>
 
 </FrameLayout>
