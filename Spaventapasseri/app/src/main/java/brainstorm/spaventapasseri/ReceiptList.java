@@ -105,7 +105,6 @@ public class ReceiptList extends AppCompatActivity {
     //R  Questo metodo trova le foto e salva le loro informazioni.
     //   Si occupera' Glide di caricarle e mostrarle ottimizzando la memoria
     private void fetchPhotosInfo() {
-        //Toast.makeText(this, appDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
         if (appDir.exists())
         {
             File[] photos = appDir.listFiles(IMAGE_FILTER);
@@ -121,7 +120,6 @@ public class ReceiptList extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_receipt_list, menu);
         return true;
     }
@@ -159,8 +157,6 @@ public class ReceiptList extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
     class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.PhotoCardHolder> {
 
         private Context context;
@@ -168,7 +164,7 @@ public class ReceiptList extends AppCompatActivity {
 
         class PhotoCardHolder extends RecyclerView.ViewHolder {
             TextView title;
-            ImageView thumbnail;//, dotsMenu;
+            ImageView thumbnail;
 
             PhotoCardHolder(View view) {
                 super( view );
@@ -198,13 +194,12 @@ public class ReceiptList extends AppCompatActivity {
         public void onBindViewHolder(final PhotoCardHolder holder, final int position) {
             final PhotoItem currentItem = photoList.get(position);
             holder.title.setText(currentItem.getTitle());
-            //R  thumbnail ratio 20%
-            //Glide.with(context).load(currentItem.getFile())
-            //                   .thumbnail(0.2f)
-            //                  .into(holder.thumbnail);
+
+            //R  thumbnail ratio 10%
             Glide.with(context).load(currentItem.getFile())
-            .thumbnail(1.f)
-            .into(holder.thumbnail);
+                .thumbnail(1.f)
+                .into(holder.thumbnail);
+
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -213,47 +208,7 @@ public class ReceiptList extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-//            holder.dotsMenu.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    showPopupMenu(holder.dotsMenu);
-//                }
-//            });
         }
-
-//        /**
-//         * Showing popup menu when tapping on 3 dots
-//         */
-//        private void showPopupMenu(View view) {
-//            // inflate menu
-//            PopupMenu popup = new PopupMenu(context, view);
-//            popup.getMenuInflater().inflate(R.menu.menu_album, popup.getMenu());
-//            popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
-//            popup.show();
-//        }
-//
-//        /**
-//         * Click listener for popup menu items
-//         */
-//        class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-//
-//            public MyMenuItemClickListener() {
-//            }
-//
-//            @Override
-//            public boolean onMenuItemClick(MenuItem menuItem) {
-//                switch (menuItem.getItemId()) {
-//                    case R.id.action_add_favourite:
-//                        Toast.makeText(mContext, "Add to favourite", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.action_play_next:
-//                        Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    default:
-//                }
-//                return false;
-//            }
-//        }
 
         @Override
         public int getItemCount() {

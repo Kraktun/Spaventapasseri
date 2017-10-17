@@ -25,7 +25,7 @@ class PhotoItem implements Serializable
         static final Comparator<PhotoItem> byTitle = new Comparator<PhotoItem>() {
             @Override
             public int compare(PhotoItem p1, PhotoItem p2) {
-                return p1.getTitle().compareTo(p2.getTitle());
+                return p1.getTitle().toLowerCase().compareTo(p2.getTitle().toLowerCase());
             }
         };
 
